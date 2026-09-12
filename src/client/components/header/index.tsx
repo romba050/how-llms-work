@@ -1,6 +1,6 @@
 /** Page header with navigation dropdown (selects the demo page), title, and tagline. */
 import type { RoutePath } from "@w3cj/ruta";
-import { Link, useLocation } from "@w3cj/ruta";
+import { navigate, useLocation } from "@w3cj/ruta";
 import { useChatContext } from "../../hooks/use-chat-context.js";
 import styles from "./styles.module.css";
 
@@ -18,15 +18,15 @@ export function Header() {
 
   return (
     <div class={styles.header}>
-      <select aria-label="Select an page" class={styles.select}>
+      {/* Navigate on `change` rather than on <option> clicks: native <select> popups
+          (Chrome and Safari on macOS) never dispatch click events to options. */}
+      <select
+        aria-label="Select a page"
+        class={styles.select}
+        onChange={e => navigate((e.target as HTMLSelectElement).value as RoutePath)}
+      >
         {options.map(route => (
-          <Link
-            key={route.path}
-            to={route.path}
-            asChild
-          >
-            <option selected={location === route.path} value={route.path}>{route.label}</option>
-          </Link>
+          <option key={route.path} selected={location === route.path} value={route.path}>{route.label}</option>
         ))}
       </select>
       <h1 class={styles.title}>{title}</h1>
